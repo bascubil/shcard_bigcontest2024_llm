@@ -86,7 +86,7 @@ index_tour = faiss.IndexFlatL2(embeddings_tour.shape[1])
 index_tour.add(embeddings_tour)
 
 # FAISS를 활용한 응답 생성
-def generate_response_with_faiss(question, df, embeddings, model, df_tour, embeddings_tour, k=3):
+def generate_response_with_faiss(question, df, embeddings, model, df_tour, embeddings_tour,max_count=10, k=3, print_prompt=True):
     index = load_faiss_index()
     query_embedding = embed_text(question).reshape(1, -1)
     distances, indices = index.search(query_embedding, k * 3)
@@ -109,6 +109,11 @@ def generate_response_with_faiss(question, df, embeddings, model, df_tour, embed
     참고할 정보: {reference_info}
     참고할 관광지 정보: {reference_tour}
     응답:"""
+
+    if print_prompt:
+        print('-----------------------------'*3)
+        print(prompt)
+        print('-----------------------------'*3)
 
     response = model.generate_content(prompt)
     return response.text if hasattr(response, 'text') else response
