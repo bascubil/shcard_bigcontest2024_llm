@@ -104,7 +104,9 @@ for message in st.session_state.messages:
 
 # 챗 기록 초기화 버튼
 def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "어떤 식당 찾으시나요?? 위치, 업종 등을 알려주시면 최고의 맛집 추천해드릴게요!"}]
+  st.session_state.conversation = None
+  st.session_state.chat_history= None
+  st.session_state.messages = [{"role": "assistant", "content": "어떤 식당 찾으시나요?? 위치, 업종 등을 알려주시면 최고의 맛집 추천해드릴게요!"}]
 st.sidebar.button('대화 초기화 🔄', on_click=clear_chat_history)
 
 # 디바이스 설정
@@ -170,8 +172,8 @@ def generate_response_with_faiss(question, df, embeddings, model, df_tour, embed
 
     prompt = f"""질문: {question}
 대답에 참고할 지침:
-1. 가맹점명과 가맹점업종 정보를 사용하여 질문에 언급된 업종이나 특정 요리를 제공하는 식당만 추천해줘.
-2. 사용자가 원하는 위치(주소 포함)를 기준으로 해당 지역 내의 식당만 추천해줘.
+1. 사용자가 원하는 위치를 기준으로 그 위치 외의 후보는 제외하고, 해당 지역 내의 식당만 추천해줘.
+2. 가맹점명과 가맹점업종 정보를 사용하여 질문에 언급된 업종이나 특정 요리를 제공하는 식당만 추천해줘.
 3. 차로 이동시간이 얼마인지 알려줘. 추천해줄때 이동시간을 고려해서 답변해줘.
 4. 질문에 언급된 업종이나 특정 요리가 없는 경우 업종별로 하나씩 추천해줘.
 5. 이용건수 및 연령대, 성별 비중을 사용하여 특정 이용층(예: 20대, 여성)이 많은 가게로 추천합니다. 대답해줄때 업종별로 가능하면 하나씩 추천해줘.
